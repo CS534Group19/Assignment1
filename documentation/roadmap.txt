@@ -1,0 +1,54 @@
+Created 1/25/2023 by Edward S. Smith
+
+----------------- Program Flow -----------------
+
+    Pt1 : A* Search ----------------------------
+
+        Main ----------------------------------- main.py
+            Run from terminal
+                Argc = 3
+                Argv = ['FileName.txt', 'SearchType', 'AccountForWeightsTF']
+            Call setup.py
+                csvReader('FileName.txt') --> matrix
+            Call prod.py
+                prod(matrix, 'SearchType', 'AccountForWeightsTF')
+                report()
+
+        Setup ---------------------------------- setup.py
+            CSV Reader function - def csvReader('FileName.txt')
+                Takes 'filename'
+                Returns matrix representation of .csv 
+
+        Production ----------------------------- prod.py
+            Production - def prod(matrix, 'SearchType', 'AccountForWeightsTF')
+                Initiate A* Search based on params
+            
+            A_star_weighted - def A_star_weighted(matrix, heurCode(0-1))
+                moves = 0
+                compute heuristicValues w/ weights using heur
+                    move to best
+                    print (moved '_' up/down/left/right)
+                    moves++
+                    repeat until goal reached
+                return(solution, moves, #nodes)
+            **^^** NOTE: How compute # of nodes expanded??? **^^**
+
+            A_start_notweighted - def A_star_notweighted(matrix, heurCode(0-1))
+                moves = 0
+                compute heuristicValues using heur
+                    move to best
+                    print (moved '_' up/down/left/right)
+                    moves++
+                    repeat until goal reached
+                return(solution, moves, #nodes)
+            **^^** NOTE: How compute # of nodes expanded??? **^^**
+
+            greedyHeur [heurCode : 0] - def greedyHeur(state)
+                1: compute manhattan distance for goal blanks in front
+                2: compute manhattan distance for goal blanks in back
+                return MIN(1, 2)
+
+            slidingHeur [heurCode : 1] -  def slidingHeur(state)
+                1: compute # of sliding moves necessary for goal blanks in front
+                2: compute # of sliding moves necessary for goal blanks in back
+                return MIN(1, 2)
