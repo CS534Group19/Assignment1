@@ -22,7 +22,9 @@ class Board():
         self.board_array = board_array
         self.tiles = self.tile_board()
         # Set of child boards
-        self.moves = []
+        self.child_states = []
+        self.total_heuristic = self.sum_board()
+
 
     def tile_board(self):
         tiles = []
@@ -32,7 +34,7 @@ class Board():
             col_counter = 0
             for col in row:
                 if col != "B":
-                    tiles.append(Tile(row_counter, col_counter, index, col))
+                    tiles.append(Tile(row_counter, col_counter, index, int(col)))
                 else:
                     tiles.append(Tile(row_counter, col_counter, index))
                 col_counter += 1
@@ -41,12 +43,15 @@ class Board():
         return tiles
             
 
-    def sum_board():
-        pass
+    def sum_board(self):
+        sum = 0
+        for tile in self.tiles:
+            sum += min(tile.back_h_val, tile.front_h_val)
 
     def __str__(self):
         for tile in self.tiles:
             print(tile)
+        return "Board printed"
 
 class Tile():
     def __init__(self, position_x, position_y, tile_index, current_value=0, front_h_val=-1, back_h_val=-1):
