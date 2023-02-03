@@ -20,7 +20,9 @@ class NPuzzle():
 class Board():
     def __init__(self, board_array):
         self.board_array = board_array
+        self.side_length = len(self.board_array)
         self.tiles = self.tile_board()
+        self.goal = self.sort_tiles()
         # Set of child boards
         self.child_states = []
         self.total_heuristic = self.sum_board()
@@ -42,6 +44,24 @@ class Board():
             row_counter += 1
         return tiles
             
+    def sort_tiles(self):
+        numeric_sort = [tile for tile in self.tiles]
+        for i in range(1, len(numeric_sort)):
+            key = numeric_sort[i]
+            j = i - 1
+            while j >= 0 and key.current_value < numeric_sort[j].current_value:
+                numeric_sort[j + 1] = numeric_sort[j]
+                j -= 1
+            numeric_sort[j + 1] = key
+
+        sorted_int_list = [tile.current_value for tile in numeric_sort]
+        new_tiles = []
+        index = 0
+        for i in range(self.side_length):
+            for j in range(self.side_length):
+                new_tiles.append(Tile(i, j, index, sorted_int_list[index]))
+                index += 1
+        return new_tiles
 
     def sum_board(self):
         sum = 0
