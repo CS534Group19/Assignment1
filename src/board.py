@@ -19,10 +19,20 @@ class NPuzzle():
 
 class Board():
     def __init__(self, board_array):
+        # The original array passed from the csv
         self.board_array = board_array
+        # One side dimension of the board
         self.side_length = len(self.board_array)
+        # Tile the board with the start state
         self.tiles = self.tile_board()
-        self.goal = self.sort_tiles()
+        # Stores the numerical values of the tiles, lowest to highest
+        self.sorted_ints = self.sort_tiles()
+        # Zeroes at the start of the board
+        self.front_goal = self.front_sort_tiles()
+        print([str(tile) for tile in self.front_goal])
+        # Zeroes at the end of the board
+        self.back_goal = self.back_sort_tiles()
+        print([str(tile) for tile in self.back_goal])
         # Set of child boards
         self.child_states = []
         self.total_heuristic = self.sum_board()
@@ -46,6 +56,7 @@ class Board():
             
     def sort_tiles(self):
         numeric_sort = [tile for tile in self.tiles]
+        # Insertion sort the board by tile value
         for i in range(1, len(numeric_sort)):
             key = numeric_sort[i]
             j = i - 1
@@ -53,8 +64,13 @@ class Board():
                 numeric_sort[j + 1] = numeric_sort[j]
                 j -= 1
             numeric_sort[j + 1] = key
-
+        # Extract integer current values from the tiles
         sorted_int_list = [tile.current_value for tile in numeric_sort]
+        return sorted_int_list
+
+    def front_sort_tiles(self):
+        sorted_int_list = self.sorted_ints
+        # Make a new list of tiles with proper end coordinates, zeroes at the start of the list
         new_tiles = []
         index = 0
         for i in range(self.side_length):
@@ -62,6 +78,25 @@ class Board():
                 new_tiles.append(Tile(i, j, index, sorted_int_list[index]))
                 index += 1
         return new_tiles
+
+    def back_sort_tiles(self):
+        sorted_int_list = self.sorted_ints
+        # Order zeroes to end of list
+        end_zeroes = 0
+        for i in range(len(sorted_int_list)):
+            if sorted_int_list[i] == 0:
+                end_zeroes = i
+        zero_list = sorted_int_list[0 : end_zeroes + 1]
+        sorted_int_list = sorted_int_list[end_zeroes + 1:] + zero_list
+        # Make a new list of tiles with proper end coordinates, zeroes at the end of the list
+        new_tiles = []
+        index = 0
+        for i in range(self.side_length):
+            for j in range(self.side_length):
+                new_tiles.append(Tile(i, j, index, sorted_int_list[index]))
+                index += 1
+        return new_tiles
+
 
     def sum_board(self):
         sum = 0
