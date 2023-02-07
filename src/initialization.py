@@ -49,7 +49,7 @@ class Initialization():
                 board.append(tile)
         return board
 
-    def make_2D(self, sorted_1D):
+    def make_2D(self, sorted_1D: list[int]):
         """
         ### Parameters
         - sorted_1D: a sorted 1D representation of a board

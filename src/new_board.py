@@ -1,54 +1,61 @@
 import copy
-import Integer
+import sys
 
 class Board():
     """Holds a given state of the game, assumes a square board
     ### Parameters:
     - board_array: 2D array holding the current values on the board
+    - goal: 2D array holding the goal state of the board
+
+    ### Attributes
     - children: 1D array holding child states -> Board objects
     - parent: the parent state of the board -> is a Board object
     - effort: the node depth of the state used in A* heuristic calculations
     - move: String representation of the move the board made
     - zero_neighbors: a list of tuples holding the (x,y) coordinate of a 0 and the (x,y) coordinate of the neighbor as a tuple (0_x, 0_y, neighbor_x, neighbor_y)
+    - h_val: the heuristic value of the board
     """
-    def __init__(self, board_array):
+    def __init__(self, board_array: list[list[int]], goal: list[list[int]]):
         self.board_array = board_array
-        self.children = []
+        self.goal = goal
+        self.children: list[Board] = []
         self.parent = None
         self.effort = 0
         self.node_depth = 0
         self.move = ""
         # List of possible moves
-        self.zero_neighbors = []
+        self.zero_neighbors = self.set_zero_neighbors()
+        self.h_val: int = self.getHVal()
 
     def __str__(self):
         return str(self.board_array)
 
     # Neighbor tuple form (0_x, 0_y, neighbor_x, neighbor_y)
-    def set_zero_neighbors(self):
+    def set_zero_neighbors(self) -> list[tuple]:
         zeroes = []
         for x in range(len(self.board_array)):
             for y in range(len(self.board_array)):
                 if self.board_array[x][y] == 0:
                     # Up
-                    deltaY = y+1
-                    if deltaY >= 0 and deltaY < len(self.board_array):
-                        zeroes.append((x, y, x, deltaY))
+                    delta_y = y+1
+                    if delta_y >= 0 and delta_y < len(self.board_array):
+                        zeroes.append((x, y, x, delta_y))
                     # Down
-                    deltaY = y-1
-                    if deltaY >= 0 and deltaY < len(self.board_array):
-                        zeroes.append((x, y, x, deltaY))
+                    delta_y = y-1
+                    if delta_y >= 0 and delta_y < len(self.board_array):
+                        zeroes.append((x, y, x, delta_y))
                     # Left
-                    deltaX = x-1
-                    if deltaX >= 0 and deltaX < len(self.board_array):
-                        zeroes.append((x, y, deltaX, y))
+                    delta_x = x-1
+                    if delta_x >= 0 and delta_x < len(self.board_array):
+                        zeroes.append((x, y, delta_x, y))
                     # Right
-                    deltaX = x+1
-                    if deltaX >= 0 and deltaX < len(self.board_array):
-                        zeroes.append((x, y, deltaX, y))
-        self.zero_neighbors = zeroes
+                    delta_x = x+1
+                    if delta_x >= 0 and delta_x < len(self.board_array):
+                        zeroes.append((x, y, delta_x, y))
+        return zeroes
 
-    def populate_children(parent_board):
+    @classmethod
+    def populate_children(cls, parent_board):
         """Static method to populate a parent node with children
         Parameters
         - parent_board: Board object
@@ -58,28 +65,28 @@ class Board():
             child.parent_board = parent_board
 
             # Zero coordinates
-            x0 = move[0]
-            y0 = move[1]
+            x_0 = move[0]
+            y_0 = move[1]
             # Neighbor coordinates
-            x1 = move[2]
-            y1 = move[3]
+            x_1 = move[2]
+            y_1 = move[3]
 
             # Compute string representation of the board move
-            if (y1-y0) == 1:  #Means there was dy up
-                child.move = f"Moved {parent_board.board_array[x1][y1]} up ;)"
-            elif (y1-y0) == -1:  #Means there was dy down
-                child.move = f"Moved {parent_board.board_array[x1][y1]} down ;)"    
-            elif (x1-x0) == -1:  #Means there was dx left
-                child.move = f"Moved {parent_board.board_array[x1][y1]} left ;)"   
+            if (y_1-y_0) == 1:  #Means there was dy up
+                child.move = f"Moved {parent_board.board_array[x_1][y_1]} up ;)"
+            elif (y_1-y_0) == -1:  #Means there was dy down
+                child.move = f"Moved {parent_board.board_array[x_1][y_1]} down ;)"    
+            elif (x_1-x_0) == -1:  #Means there was dx left
+                child.move = f"Moved {parent_board.board_array[x_1][y_1]} left ;)"   
             else:
-                child.move = f"Moved {parent_board.board_array[x1][y1]} right ;)"
+                child.move = f"Moved {parent_board.board_array[x_1][y_1]} right ;)"
 
             # Swap the zero and the value
-            val = parent_board.board_array[x1][y1]
-            child.board_array[x0][y0] = val
-            child.board_array[x1][y1] = 0   
+            val = parent_board.board_array[x_1][y_1]
+            child.board_array[x_0][y_0] = val
+            child.board_array[x_1][y_1] = 0
 
-            # Record traverse effort 
+            # Record traverse effort
             if (False):   # FIX LATER WITH "Weight param"
                 child.effort = parent_board.effort + 1*val
             else:
@@ -91,30 +98,47 @@ class Board():
             # Update neighbors for new board
             child.set_zero_neighbors()
 
-            parent_board.children.append(child)
+            child.h_val += child.node_depth
 
-    # TODO Spencer will write
-    def getHVal_Astar(board):
-        sum = 0
-        for row in board.board_array:
-            for val in row:
-                sum += 9000 # Will do maths
-        return sum
+            parent_board.children.append(child)
+        parent_board.children.sort(reverse=True, key=return_child_hval)
+
+    def getHVal(self): # heuristic
+        total: int = 0
+        for i in range(1, len(self.board_array)**2):
+            manhattan_distance = calculate_manhattan_dist_for_value(self.board_array, self.goal, i)
+            if manhattan_distance != -1:
+                total += manhattan_distance
+        return total
 
     # Selects a parent's favorite child
-    def find_next_best_move_AStar(self):
-        min = Integer.MAX_VALUE
-        favorite_Child = None
-        for child in self.children:
-            h_val = Board.getHVal_Astar(child)
-            if (h_val + child.effort < min):
-                min = h_val + child.effort
-                favorite_Child = child
-        return (h_val, favorite_Child)
+    # def find_next_best_move_AStar(self):
+    #     minimum: int = sys.maxsize
+    #     favorite_child: Board = None
+    #     for child in self.children:
+    #         h_val: int = child.h_val
+    #         if h_val + child.effort < minimum:
+    #             minimum = h_val + child.effort
+    #             favorite_child = child
+    #     return (h_val, favorite_child)
 
 
+def return_child_hval(child: Board) -> int:
+    return child.h_val
 
+def get_coords_for_val(board: list[list[int]], val: int) -> tuple:
+    for x in range(len(board)):
+        for y in range(len(board)):
+            if board[x][y] == val:
+                return (x, y)
+    return -1
 
-
-
-
+def calculate_manhattan_dist_for_value(current_board: list[list[int]], goal_board: list[list[int]], val: int) -> int:
+    # Find (x,y) coords for all current positions
+    current_coords: tuple = get_coords_for_val(current_board, val)
+    goal_coords: tuple = get_coords_for_val(goal_board, val)
+    if current_coords == -1 or goal_coords == -1:
+        return -1
+    else:
+        return abs(current_coords[0] - goal_coords[0]) + abs(current_coords[1] - goal_coords[1])
+        
