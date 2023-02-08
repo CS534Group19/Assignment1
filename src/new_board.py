@@ -40,19 +40,23 @@ class Board():
                     # Up
                     delta_y = row+1
                     if delta_y >= 0 and delta_y < len(self.board_array):
-                        zeroes.append((col, row, col, delta_y))
+                        if self.board_array[delta_y][col] != 0:
+                            zeroes.append((col, row, col, delta_y))
                     # Down
                     delta_y = row-1
                     if delta_y >= 0 and delta_y < len(self.board_array):
-                        zeroes.append((col, row, col, delta_y))
+                        if self.board_array[delta_y][col] != 0: 
+                            zeroes.append((col, row, col, delta_y))
                     # Left
                     delta_x = col-1
                     if delta_x >= 0 and delta_x < len(self.board_array):
-                        zeroes.append((col, row, delta_x, row))
+                        if self.board_array[row][delta_x] != 0:
+                            zeroes.append((col, row, delta_x, row))
                     # Right
                     delta_x = col+1
                     if delta_x >= 0 and delta_x < len(self.board_array):
-                        zeroes.append((col, row, delta_x, row))
+                        if self.board_array[row][delta_x] != 0:
+                            zeroes.append((col, row, delta_x, row))
         self.zero_neighbors = zeroes
 
 

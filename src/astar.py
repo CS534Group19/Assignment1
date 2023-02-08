@@ -9,25 +9,26 @@ from initialization import Initialization
 from new_board import *
 
 # Boards for testing
-BOARD_1 = "./documentation/test_boards/board1.csv"
-BOARD_2 = "./documentation/test_boards/board2.csv"
-BOARD_3 = "./documentation/test_boards/board3.csv" # easy 4 move
-BOARD_4 = "./documentation/test_boards/board4.csv" # becomes hard 6 move, starts just alternating
+# Professor Beck's boards
+BOARD_1 = "./documentation/test_boards/board1.csv" # not solvable according to https://www.geeksforgeeks.org/check-instance-8-puzzle-solvable/
+BOARD_2 = "./documentation/test_boards/board2.csv" # solvable according to https://www.geeksforgeeks.org/check-instance-15-puzzle-solvable/
 
-# Whether the algorithm should put the zeroes at the end of the goal board or not
-BACK = True
+# Cutter Beck's boards
+BOARD_3 = "./documentation/test_boards/board3.csv" # ~ 0.07 seconds
+BOARD_4 = "./documentation/test_boards/board4.csv" # ~22 seconds
+BOARD_5 = "./documentation/test_boards/board5.csv" # 
+BOARD_6 = "./documentation/test_boards/board6.csv" # ~10.5 seconds
+BOARD_7 = "./documentation/test_boards/board7.csv" # ~3.8 seconds
+
 
 # Create a new N-Puzzle
-puzzle = Initialization(BOARD_4)
+puzzle = Initialization(BOARD_5)
 # Get the two possible goal states
 zeroes_in_front_goal = puzzle.front_goal
 zeroes_in_back_goal = puzzle.back_goal
 
 # Make the starting board
-if BACK:
-    parent = Board(puzzle.board_array_2D, zeroes_in_back_goal)
-else:
-    parent = Board(puzzle.board_array_2D, zeroes_in_front_goal)
+parent = Board(puzzle.board_array_2D, zeroes_in_back_goal)
 
 def search_tree(start: Board):
     """Static method to run an A* search
@@ -44,10 +45,15 @@ def search_tree(start: Board):
     open = [start] # tracks children being searched
     closed: list[Board] = [] # tracks expanded nodes
     goal: bool = False
+    counter = 0
 
     while not goal:
         # PriorityQueue
         current_board = open.pop(0)
+        # print([board.h_val for board in open])
+        # print([board.f_val for board in open])
+        counter += 1
+        print(counter)
         # print(current_board.effort)
         # print(current_board.f_val)
         # print("\n")
@@ -56,11 +62,10 @@ def search_tree(start: Board):
         if current_board.board_array == current_board.goal: # at goal state
             goal = True
             moves = []
-            cost = 0
+            cost = current_board.effort
             final_depth = current_board.node_depth
             while current_board.parent is not None:
                 moves.append(current_board.move)
-                cost += current_board.effort
                 current_board = current_board.parent
             moves.reverse()
             for move in moves:
@@ -69,7 +74,8 @@ def search_tree(start: Board):
             print(f"\nNodes expanded: {len(closed)}")
             print(f"Moves required: {len(moves)}")
             print(f"Solution Cost: {cost}")
-            print(f"Estimated branching factor {len(closed)**(1/final_depth):0.3f}")
+            if final_depth != 0:
+                print(f"Estimated branching factor {len(closed)**(1/final_depth):0.3f}")
             return
 
         # Assign all possible children to the current board
@@ -81,9 +87,6 @@ def search_tree(start: Board):
         # Added expanded board to closed for counting later
         closed.append(current_board)
         open.sort(key = lambda child:child.f_val)
-        print([board.h_val for board in open])
-        print([board.f_val for board in open])
-        print("\n")
         
             
     print("No solution found")
