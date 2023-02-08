@@ -46,8 +46,12 @@ def search_tree(start: Board):
     goal: bool = False
 
     while not goal:
-        current_board = open[0]
-        open.clear() # removes all worse children from the stack (Is this necessary? Currently doesn't operate properly without it)
+        # PriorityQueue
+        current_board = open.pop(0)
+        # print(current_board.effort)
+        # print(current_board.f_val)
+        # print("\n")
+        # open.clear() # removes all worse children from the stack (Is this necessary? Currently doesn't operate properly without it)
 
         if current_board.board_array == current_board.goal: # at goal state
             goal = True
@@ -71,11 +75,13 @@ def search_tree(start: Board):
         # Assign all possible children to the current board
         populate_children(current_board)
         for child in current_board.children:
-            # if child.board_array not in [board.board_array for board in open]:
-            open.append(child)
+            if child.board_array not in [board.board_array for board in open]:
+                open.append(child)
 
         # Added expanded board to closed for counting later
         closed.append(current_board)
+        open.sort(key = lambda child:child.f_val)
+        
             
     print("No solution found")
     return

@@ -25,6 +25,7 @@ class Board():
         # List of possible moves
         self.zero_neighbors = []
         self.f_val: int = 0
+        self.effort = 0
 
     def __str__(self):
         return str(self.board_array)
@@ -64,7 +65,6 @@ def populate_children(parent_board: Board):
         # child = Board(parent_board.board_array, parent_board.goal)
         child = copy.deepcopy(parent_board)
         child.parent = parent_board
-        child.parent = parent_board
         child.node_depth = parent_board.node_depth + 1
 
         # Zero coordinates
@@ -92,11 +92,14 @@ def populate_children(parent_board: Board):
         # Update neighbors for new board
         child.set_zero_neighbors()
         # Calculate the heuristic cost of the board
-        child.f_val = getHVal(child) * val
+        child.effort = parent_board.effort + val
+        # child.f_val = getHVal(child) + child.effort
+        child.f_val = getHVal(child) + child.effort
         # Tell the parent it has children
         parent_board.children.append(child)
     # Sort the children to make sure the best gets explore first
-    parent_board.children.sort(key = lambda child : child.f_val)
+    # parent_board.children.sort(key = lambda child : child.f_val)
+    print([child.f_val for child in parent_board.children])
 
 def get_coords_for_val(board: list[list[int]], val: int):
     """Static method to find the (x,y) coordinates of the provided value
@@ -143,5 +146,5 @@ def getHVal(board_obj: Board): # heuristic
     for i in range(1, len(board_obj.board_array)**2):
         manhattan_distance = calculate_manhattan_dist_for_value(board_obj.board_array, board_obj.goal, i)
         if manhattan_distance != -1:
-            total += manhattan_distance
+            total += manhattan_distance + i
     return total
