@@ -27,6 +27,8 @@ puzzle = Initialization(BOARD_3)
 zeroes_in_front_goal = puzzle.front_goal
 zeroes_in_back_goal = puzzle.back_goal
 
+# TODO How do we define which goal to go for??
+
 # Make the starting board
 parent = Board(puzzle.board_array_2D, zeroes_in_back_goal)
 

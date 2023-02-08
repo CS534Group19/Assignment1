@@ -138,6 +138,7 @@ def calculate_manhattan_dist_for_value(current_board: list[list[int]], goal_boar
     if current_coords == -1 or goal_coords == -1:
         return -1
     else:
+        # TODO Returns the WEIGHTED Manhattan distance, need to flag this in CMD
         return abs(current_coords[0] - goal_coords[0]) + abs(current_coords[1] - goal_coords[1]) * val
 
 def getHVal(board_obj: Board): # heuristic
