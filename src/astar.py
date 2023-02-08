@@ -14,15 +14,15 @@ BOARD_1 = "./documentation/test_boards/board1.csv" # not solvable according to h
 BOARD_2 = "./documentation/test_boards/board2.csv" # solvable according to https://www.geeksforgeeks.org/check-instance-15-puzzle-solvable/
 
 # Cutter Beck's boards
-BOARD_3 = "./documentation/test_boards/board3.csv" # ~ 0.07 seconds
-BOARD_4 = "./documentation/test_boards/board4.csv" # ~22 seconds
-BOARD_5 = "./documentation/test_boards/board5.csv" # 
-BOARD_6 = "./documentation/test_boards/board6.csv" # ~10.5 seconds
-BOARD_7 = "./documentation/test_boards/board7.csv" # ~3.8 seconds
+BOARD_3 = "./documentation/test_boards/board3.csv" # ~0.2 seconds, 4 moves, 8 nodes, 18 cost, branching factor 1.7
+BOARD_4 = "./documentation/test_boards/board4.csv" # ~22 seconds, 6 moves, 52 nodes, 26 cost, branching factor 1.9
+BOARD_5 = "./documentation/test_boards/board5.csv" # ~418.7 seconds, or ~7 min, 5 moves, 25 nodes, 60 cost, branching factor 1.9
+BOARD_6 = "./documentation/test_boards/board6.csv" # ~10.5 seconds, 3 moves, 14 nodes, 18 cost, branching factor 2.4
+BOARD_7 = "./documentation/test_boards/board7.csv" # ~3.8 seconds, 4 moves, 14 nodes, 46 cost, branching factor 1.9
 
 
 # Create a new N-Puzzle
-puzzle = Initialization(BOARD_5)
+puzzle = Initialization(BOARD_3)
 # Get the two possible goal states
 zeroes_in_front_goal = puzzle.front_goal
 zeroes_in_back_goal = puzzle.back_goal
