@@ -18,7 +18,7 @@ BOARD_4 = "./documentation/test_boards/board4.csv" # becomes hard 6 move, starts
 BACK = True
 
 # Create a new N-Puzzle
-puzzle = Initialization(BOARD_3)
+puzzle = Initialization(BOARD_4)
 # Get the two possible goal states
 zeroes_in_front_goal = puzzle.front_goal
 zeroes_in_back_goal = puzzle.back_goal
@@ -60,7 +60,7 @@ def search_tree(start: Board):
             final_depth = current_board.node_depth
             while current_board.parent is not None:
                 moves.append(current_board.move)
-                cost += current_board.f_val
+                cost += current_board.effort
                 current_board = current_board.parent
             moves.reverse()
             for move in moves:
@@ -81,6 +81,9 @@ def search_tree(start: Board):
         # Added expanded board to closed for counting later
         closed.append(current_board)
         open.sort(key = lambda child:child.f_val)
+        print([board.h_val for board in open])
+        print([board.f_val for board in open])
+        print("\n")
         
             
     print("No solution found")
