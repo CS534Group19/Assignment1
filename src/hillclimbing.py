@@ -34,6 +34,8 @@ zeroes_in_back_goal = puzzle.back_goal
 # Make the starting board
 parent = Board(puzzle.board_array_2D, zeroes_in_back_goal)
 
+print(puzzle)
+
 
 def hillClimb(start: Board, time):
     """Static method to run hill climbing
@@ -65,7 +67,7 @@ def hillClimb(start: Board, time):
         repeatCounter += 1
 
         # while time hasnt run out and end not found
-        while (runTime < trialTime and (not found))
+        while (runTime < trialTime and (not found)):
             tic = time.perf_counter()
 
             #if finds a solution or local min
@@ -80,13 +82,20 @@ def hillClimb(start: Board, time):
                         current_board = current_board.parent
                     moves.reverse()
                     bestMoves = moves
-                
+
+        # Assign all possible children to the current board
+        populate_children(current_board)
+        sortedList = current_board.children
+        sortedList.sort(reverse = True, key=getHVal)
+        (sortedList[0].h_val <= current_board.h_val)
+        open.append(sortedList)
+            
                     
 
 
 
-            toc = time.perf_counter()
-            runTime += toc - tic
+        toc = time.perf_counter()
+        runTime += toc - tic
     for move in moves:
-                print(move)
+        print(move)
     
