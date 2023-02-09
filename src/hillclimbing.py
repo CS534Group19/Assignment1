@@ -1,13 +1,7 @@
 import sys
-
-# Hill Climbing param order -> board_file_name.csv run_time
-# Params stored in sys.argv
-
-import sys
 import time
 
-# TODO make command line interface
-# A* param order -> board_file_name.csv heuristic tile_weight?
+# Hill Climbing param order -> board_file_name.csv run_time
 # Params stored in sys.argv
 
 from initialization import Initialization
@@ -34,10 +28,9 @@ zeroes_in_back_goal = puzzle.back_goal
 # Make the starting board
 parent = Board(puzzle.board_array_2D, zeroes_in_back_goal)
 
-print(puzzle)
+# print(puzzle)
 
-
-def hillClimb(start: Board, time):
+def hillClimb(start: Board, timer):
     """Static method to run hill climbing
     ### Parameters
     - start: the starting Board for the search
@@ -50,24 +43,22 @@ def hillClimb(start: Board, time):
     # Begin search
     current_board: Board
     open = [start] # tracks children being searched
-    closed: list[Board] = [] # tracks expanded nodes
-    goal: bool = False
     bestH = 999 # currently best found h_val
     bestMoves = [] # list of the best moves to be printed
 
     repeatNum = 150 # number of repeats we want to run
-    trialTime = time/repeatNum
+    trialTime = timer/repeatNum
     repeatCounter = 0
 
     # while not over max repeats
-    while (repeatCounter < repeatNum):
+    while ((repeatCounter < repeatNum) and open):
         runtime = 0
         found = False
         current_board = open.pop(0)
         repeatCounter += 1
 
         # while time hasnt run out and end not found
-        while (runTime < trialTime and (not found)):
+        while (runtime < trialTime and (not found)):
             tic = time.perf_counter()
 
             #if finds a solution or local min
@@ -83,19 +74,30 @@ def hillClimb(start: Board, time):
                     moves.reverse()
                     bestMoves = moves
 
-        # Assign all possible children to the current board
-        populate_children(current_board)
-        sortedList = current_board.children
-        sortedList.sort(reverse = True, key=getHVal)
-        (sortedList[0].h_val <= current_board.h_val)
-        open.append(sortedList)
-            
-                    
+            # Assign all possible children to the current board
+            populate_children(current_board)
+            sortedList = current_board.children
+            sortedList.sort(reverse = True, key=getHVal)
+            if (sortedList[0].h_val <= current_board.h_val):
+                open.append(sortedList[0])
+                
+            else:
+                found = True
+                    # check if the found h_val is better than the current best
+                if current_board.h_val < bestH:
+                    # get the list of moves
+                    moves = []
+                    while current_board.parent is not None:
+                        moves.append(current_board.move)
+                        current_board = current_board.parent
+                    moves.reverse()
+                    bestMoves = moves        
 
 
 
-        toc = time.perf_counter()
-        runTime += toc - tic
-    for move in moves:
+            toc = time.perf_counter()
+            runtime += toc - tic
+    for move in bestMoves:
         print(move)
     
+hillClimb(parent, 1200)
