@@ -3,7 +3,7 @@ import csv
 class NPuzzle():
     def __init__(self, board_file):
         self.board_file = board_file
-        self.start_state = Board(self.create_board_array())
+        self.state = Board(self.create_board_array())
 
     def create_board_array(self):
         board_array = []
@@ -14,12 +14,12 @@ class NPuzzle():
         return board_array
 
     def __str__(self):
-        return str(self.start_state)
+        return str(self.state)
 
 
 class Board():
     def __init__(self, board_array):
-        # The original array passed from the csv
+        # The original array passed from the csv, 2D array
         self.board_array = board_array
         # One side dimension of the board
         self.side_length = len(self.board_array)
@@ -33,9 +33,11 @@ class Board():
         # Zeroes at the end of the board
         self.back_goal = self.back_sort_tiles()
         print([str(tile) for tile in self.back_goal])
-        # Set of child boards
-        self.child_states = []
         self.total_heuristic = self.sum_board()
+        self.effort = 0
+        self.parent = None
+        # String representation of what happened in the board
+        self.move = "No Move"
 
 
     def tile_board(self):
@@ -97,11 +99,6 @@ class Board():
                 index += 1
         return new_tiles
 
-
-    def sum_board(self):
-        sum = 0
-        for tile in self.tiles:
-            sum += min(tile.back_h_val, tile.front_h_val)
 
     def __str__(self):
         for tile in self.tiles:
