@@ -11,7 +11,7 @@ from new_board import *
 # Boards for testing
 # Professor Beck's boards
 BOARD_1 = "./documentation/test_boards/board1.csv" # not solvable according to https://www.geeksforgeeks.org/check-instance-8-puzzle-solvable/
-BOARD_2 = "./documentation/test_boards/board2.csv" # solvable according to https://www.geeksforgeeks.org/check-instance-15-puzzle-solvable/
+BOARD_2 = "./documentation/test_boards/board2.csv" # solvable according to https://www.geeksforgeeks.org/check-instance-15-puzzle-solvable/ NOT WORKING WITH ASTAR
 
 # Cutter Beck's boards
 BOARD_3 = "./documentation/test_boards/board3.csv" # ~0.2 seconds, 4 moves, 8 nodes, 18 cost, branching factor 1.7
@@ -22,7 +22,7 @@ BOARD_7 = "./documentation/test_boards/board7.csv" # ~3.8 seconds, 4 moves, 14 n
 
 
 # Create a new N-Puzzle
-puzzle = Initialization(BOARD_3)
+puzzle = Initialization(BOARD_5)
 # Get the two possible goal states
 zeroes_in_front_goal = puzzle.front_goal
 zeroes_in_back_goal = puzzle.back_goal
@@ -45,13 +45,15 @@ def search_tree(start: Board):
     # Begin search
     current_board: Board
     open = [start] # tracks children being searched
+    open_boards = [start.board_array]
     closed: list[Board] = [] # tracks expanded nodes
     goal: bool = False
     counter = 0
 
-    while not goal:
+    while True:
         # PriorityQueue
         current_board = open.pop(0)
+        open_boards.pop(0) # get rid of the board from this array
         # print([board.h_val for board in open])
         # print([board.f_val for board in open])
         counter += 1
@@ -62,7 +64,6 @@ def search_tree(start: Board):
         # open.clear() # removes all worse children from the stack (Is this necessary? Currently doesn't operate properly without it)
 
         if current_board.board_array == current_board.goal: # at goal state
-            goal = True
             moves = []
             cost = current_board.effort
             final_depth = current_board.node_depth
@@ -83,16 +84,13 @@ def search_tree(start: Board):
         # Assign all possible children to the current board
         populate_children(current_board)
         for child in current_board.children:
-            if child.board_array not in [board.board_array for board in open]:
+            if child.board_array not in open_boards:
                 open.append(child)
+                open_boards.append(child.board_array)
 
         # Added expanded board to closed for counting later
         closed.append(current_board)
         open.sort(key = lambda child:child.f_val)
-        
-            
-    print("No solution found")
-    return
 
 tic = time.perf_counter()
 search_tree(parent)

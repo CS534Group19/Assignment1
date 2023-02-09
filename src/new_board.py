@@ -139,7 +139,7 @@ def calculate_manhattan_dist_for_value(current_board: list[list[int]], goal_boar
         return -1
     else:
         # TODO Returns the WEIGHTED Manhattan distance, need to flag this in CMD
-        return abs(current_coords[0] - goal_coords[0]) + abs(current_coords[1] - goal_coords[1]) * val
+        return abs(current_coords[0] - goal_coords[0]) + abs(current_coords[1] - goal_coords[1]) * (val**2)
 
 def getHVal(board_obj: Board): # heuristic
     """Static method to find the total heuristic value of a given board
