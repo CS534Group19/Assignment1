@@ -167,7 +167,7 @@ def calculate_manhattan_dist_for_value(current_board: list[list[int]], goal_boar
         if weighted:
             return abs(current_coords[0] - goal_coords[0]) + abs(current_coords[1] - goal_coords[1]) * (val**2)
         else:
-            return abs(current_coords[0] - goal_coords[0]) + abs(current_coords[1] - goal_coords[1]) # TODO check if this is proper unweighted
+            return abs(current_coords[0] - goal_coords[0]) + abs(current_coords[1] - goal_coords[1])
 
 def getHVal(board_obj: Board, goal: list[list[int]]) -> int: # sliding heuristic
     """Static method to find the total heuristic value of a given board

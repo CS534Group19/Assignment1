@@ -1,4 +1,5 @@
-# Author: Cutter Beck
+# Author: Jeff Davis, Mike Alicea
+# Adapted by Cutter Beck
 # Updated: 2/10/2023
 
 import sys
@@ -60,7 +61,7 @@ def hillClimb(start: Board, max_time: float, repeats: int):
     start_time = time.perf_counter()
     while True:
         current_time = time.perf_counter()
-        if (current_board.board_array ==  current_board.goal):
+        if (current_board.h_val == 0):
             print("\nReached goal state")
             cost = current_board.effort
             final_depth = current_board.node_depth
@@ -77,13 +78,14 @@ def hillClimb(start: Board, max_time: float, repeats: int):
             print(f"Solution Cost: {cost}")
             if final_depth != 0:
                 print(f"Estimated branching factor {len(nodes_expanded)**(1/final_depth):0.3f}")
+            break
         if (current_time - start_time < max_time): # haven't overdone the time limit
             trial_start_time = time.perf_counter()
             trial_counter += 1
 
             current_board = open.pop(0)
             populate_children(current_board)
-            current_board.children.sort(reverse = True, key = lambda child:child.h_val)
+            current_board.children.sort(key = lambda child:child.h_val)
             open.append(current_board.children[0])
             nodes_expanded.append(current_board)
 

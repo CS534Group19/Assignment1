@@ -77,6 +77,7 @@ def hillClimb(start: Board, max_time: float, repeats: int):
             print(f"Solution Cost: {cost}")
             if final_depth != 0:
                 print(f"Estimated branching factor {len(nodes_expanded)**(1/final_depth):0.3f}")
+            break
         if (current_time - start_time < max_time): # haven't overdone the time limit
             trial_start_time = time.perf_counter()
             trial_counter += 1
@@ -87,7 +88,7 @@ def hillClimb(start: Board, max_time: float, repeats: int):
             for child in current_board.children:
                 if child.board_array not in [board.board_array for board in open]:
                     open.append(child)
-            open.sort(reverse = True, key = lambda child:child.h_val)
+            open.sort(key = lambda child:child.h_val)
 
             nodes_expanded.append(current_board)
 

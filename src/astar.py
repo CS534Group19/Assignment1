@@ -28,7 +28,7 @@ arg_weighted = sys.argv[3]
 
 # arg_board_csv = BOARD_3
 # arg_heuristic = "sliding"
-# arg_weighted = True
+# arg_weighted = "True"
 
 
 # Create a new N-Puzzle
