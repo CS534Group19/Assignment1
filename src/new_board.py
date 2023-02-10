@@ -1,3 +1,6 @@
+# Author: Cutter Beck
+# Updated: 2/10/2023
+
 import copy
 import sys
 
@@ -5,19 +8,40 @@ class Board():
     """Holds a given state of the game, assumes a square board
     ### Parameters:
     - board_array: 2D array holding the current values on the board
-    - goal: 2D array holding the goal state of the board
+    - front_goal: 2D array holding the goal where 0s are in the top left
+    - back_goal: 2D array holding the goal where 0s are in the bottom right
+    - weighted: a boolean flag on whether the weighted or unweighted heuristic should be used
+    - heuristic: a string flagging either sliding or greedy for the heurisitic to be used
 
     ### Attributes
+    - goal: 2D array holding the chosen best goal state of the board
     - children: 1D array holding child states -> Board objects
     - parent: the parent state of the board -> is a Board object
     - node_depth: the depth of the tree the current board is at
     - move: String representation of the move the board made
     - zero_neighbors: a list of tuples holding the (x,y) coordinate of a 0 and the (x,y) coordinate of the neighbor as a tuple (0_x, 0_y, neighbor_x, neighbor_y)
-    - f_val: the heuristic value of the board
+    - f_val: the heuristic value of the board including board effort
+    - h_val: the heuristic value of the board (either sliding or greedy)
+    - effort: how much work was done for a board (summation of tile values moved)
     """
-    def __init__(self, board_array: list[list[int]], goal: list[list[int]]):
+    def __init__(self, board_array: list[list[int]], front_goal: list[list[int]], back_goal: list[list[int]], weighted: str = None, heuristic: str = None):
+        # Parameters
         self.board_array = board_array
-        self.goal = goal
+        self.front_goal = front_goal
+        self.back_goal = back_goal
+        if weighted is None:
+            self.weighted = None
+        else:
+            if weighted.lower() == "true":
+                self.weighted = True
+            else:
+                self.weighted = False
+        if heuristic is None:
+            self.heuristic = None
+        else:
+            self.heuristic = heuristic
+        # Attributes
+        self.goal = check_best_goal_state(self, self.front_goal, self.back_goal)
         self.children: list[Board] = []
         self.parent = None
         self.node_depth = 0
@@ -25,8 +49,10 @@ class Board():
         # List of possible moves
         self.zero_neighbors = []
         self.f_val: int = 0
-        self.h_val = 0
+        self.h_val = getHVal(self, self.goal)
         self.effort = 0
+
+        # TODO Best Goal (front or back, check which is best for the board and set that to goal)
 
     def __str__(self):
         return str(self.board_array)
@@ -98,14 +124,14 @@ def populate_children(parent_board: Board):
         child.set_zero_neighbors()
         # Calculate the heuristic cost of the board
         child.effort = parent_board.effort + val
-        # child.f_val = getHVal(child) + child.effort
-        child.h_val = getHVal(child)
+        if parent_board.heuristic == "sliding":
+            child.h_val = getHVal(child, child.goal)
+        else:
+            pass # TODO create greedy heuristic function, defaulting to sliding
+            child.h_val = getHVal(child, child.goal)
         child.f_val = child.h_val + child.effort
         # Tell the parent it has children
         parent_board.children.append(child)
-    # Sort the children to make sure the best gets explore first
-    # parent_board.children.sort(key = lambda child : child.f_val)
-    # print([child.f_val for child in parent_board.children])
 
 def get_coords_for_val(board: list[list[int]], val: int):
     """Static method to find the (x,y) coordinates of the provided value
@@ -122,7 +148,7 @@ def get_coords_for_val(board: list[list[int]], val: int):
                 return (x, y)
     return -1
 
-def calculate_manhattan_dist_for_value(current_board: list[list[int]], goal_board: list[list[int]], val: int) -> int:
+def calculate_manhattan_dist_for_value(current_board: list[list[int]], goal_board: list[list[int]], val: int, weighted: bool) -> int:
     """Static method to compute the Manhattan distance for a given value
     ### Parameters
     - current_board: the current state of the board
@@ -138,10 +164,12 @@ def calculate_manhattan_dist_for_value(current_board: list[list[int]], goal_boar
     if current_coords == -1 or goal_coords == -1:
         return -1
     else:
-        # TODO Returns the WEIGHTED Manhattan distance, need to flag this in CMD
-        return abs(current_coords[0] - goal_coords[0]) + abs(current_coords[1] - goal_coords[1]) * (val**2)
+        if weighted:
+            return abs(current_coords[0] - goal_coords[0]) + abs(current_coords[1] - goal_coords[1]) * (val**2)
+        else:
+            return abs(current_coords[0] - goal_coords[0]) + abs(current_coords[1] - goal_coords[1]) # TODO check if this is proper unweighted
 
-def getHVal(board_obj: Board): # heuristic
+def getHVal(board_obj: Board, goal: list[list[int]]) -> int: # sliding heuristic
     """Static method to find the total heuristic value of a given board
     ### Parameters
     - board_obj: a Board object to be fitted with a heuristic value
@@ -151,7 +179,33 @@ def getHVal(board_obj: Board): # heuristic
     """
     total: int = 0
     for i in range(1, len(board_obj.board_array)**2):
-        manhattan_distance = calculate_manhattan_dist_for_value(board_obj.board_array, board_obj.goal, i)
+        manhattan_distance = calculate_manhattan_dist_for_value(board_obj.board_array, goal, i, board_obj.weighted)
         if manhattan_distance != -1:
             total += manhattan_distance
     return total
+
+def check_best_goal_state(board_obj: Board, front: list[list[int]], back: list[list[int]]) -> list[list[int]]:
+    """Static method to find which goal state is best for the board
+    ### Parameters
+    - board_obj: a Board object to be fitted with a heuristic value
+    - front: 2D array holding the goal where 0s are in the top left
+    - back: 2D array holding the goal where 0s are in the bottom right
+    """
+    if board_obj.heuristic == "sliding":
+        front_h_val = getHVal(board_obj, front)
+        # print(f"Front h val: {front_h_val}")
+        back_h_val = getHVal(board_obj, back)
+        # print(f"Back h val: {back_h_val}")
+    else:
+        # TODO implement greedy check, defaulting to sliding
+        front_h_val = getHVal(board_obj, front)
+        # print(f"Front h val: {front_h_val}")
+        back_h_val = getHVal(board_obj, back)
+        # print(f"Back h val: {back_h_val}")
+
+    if back_h_val < front_h_val:
+        return back
+    elif front_h_val < back_h_val:
+        return front
+    else:
+        return back

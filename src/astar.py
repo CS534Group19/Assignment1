@@ -1,36 +1,44 @@
+# Author: Cutter Beck
+# Updated: 2/10/2023
+
+# TODO Part 3 note: use greedy_hillclimbing.py to find a next move state and use that in a heuristic calculation somehow
+
 import sys
 import time
-
-# TODO make command line interface
-# A* param order -> board_file_name.csv heuristic tile_weight?
-# Params stored in sys.argv
-
 from initialization import Initialization
 from new_board import *
 
-# Boards for testing
-# Professor Beck's boards
-BOARD_1 = "./documentation/test_boards/board1.csv" # not solvable according to https://www.geeksforgeeks.org/check-instance-8-puzzle-solvable/
-BOARD_2 = "./documentation/test_boards/board2.csv" # solvable according to https://www.geeksforgeeks.org/check-instance-15-puzzle-solvable/ NOT WORKING WITH ASTAR
+# A* param order -> board_file_name.csv heuristic tile_weight?
+# Params stored in sys.argv array, sys.argv[0] is the name of the Python file being executed
+arg_board_csv = sys.argv[1]
+arg_heuristic = sys.argv[2]
+arg_weighted = sys.argv[3]
 
-# Cutter Beck's boards
-BOARD_3 = "./documentation/test_boards/board3.csv" # ~0.2 seconds, 4 moves, 8 nodes, 18 cost, branching factor 1.7
-BOARD_4 = "./documentation/test_boards/board4.csv" # ~22 seconds, 6 moves, 52 nodes, 26 cost, branching factor 1.9
-BOARD_5 = "./documentation/test_boards/board5.csv" # ~418.7 seconds, or ~7 min, 5 moves, 25 nodes, 60 cost, branching factor 1.9
-BOARD_6 = "./documentation/test_boards/board6.csv" # ~10.5 seconds, 3 moves, 14 nodes, 18 cost, branching factor 2.4
-BOARD_7 = "./documentation/test_boards/board7.csv" # ~3.8 seconds, 4 moves, 14 nodes, 46 cost, branching factor 1.9
+# # Boards for testing
+# # Professor Beck's boards
+# BOARD_1 = "./documentation/test_boards/board1.csv" # not solvable according to https://www.geeksforgeeks.org/check-instance-8-puzzle-solvable/
+# BOARD_2 = "./documentation/test_boards/board2.csv" # solvable according to https://www.geeksforgeeks.org/check-instance-15-puzzle-solvable/
+
+# # Cutter Beck's boards
+# BOARD_3 = "./documentation/test_boards/board3.csv" # ~0.2 seconds, 4 moves, 8 nodes, 18 cost, branching factor 1.7
+# BOARD_4 = "./documentation/test_boards/board4.csv" # ~22 seconds, 6 moves, 52 nodes, 26 cost, branching factor 1.9
+# BOARD_5 = "./documentation/test_boards/board5.csv" # ~418.7 seconds, or ~7 min, 5 moves, 25 nodes, 60 cost, branching factor 1.9
+# BOARD_6 = "./documentation/test_boards/board6.csv" # ~10.5 seconds, 3 moves, 14 nodes, 18 cost, branching factor 2.4
+# BOARD_7 = "./documentation/test_boards/board7.csv" # ~3.8 seconds, 4 moves, 14 nodes, 46 cost, branching factor 1.9
+
+# arg_board_csv = BOARD_3
+# arg_heuristic = "sliding"
+# arg_weighted = True
 
 
 # Create a new N-Puzzle
-puzzle = Initialization(BOARD_5)
+puzzle = Initialization(arg_board_csv)
 # Get the two possible goal states
 zeroes_in_front_goal = puzzle.front_goal
 zeroes_in_back_goal = puzzle.back_goal
 
-# TODO How do we define which goal to go for??
-
 # Make the starting board
-parent = Board(puzzle.board_array_2D, zeroes_in_back_goal)
+parent = Board(puzzle.board_array_2D, zeroes_in_front_goal, zeroes_in_back_goal, arg_weighted, arg_heuristic)
 
 def search_tree(start: Board):
     """Static method to run an A* search
@@ -40,7 +48,7 @@ def search_tree(start: Board):
     ### Returns
     - nothing, but prints to the console
     """
-    # Preliminary setup
+    # Get all possible moves for the start state
     start.set_zero_neighbors()
     # Begin search
     current_board: Board
@@ -53,20 +61,14 @@ def search_tree(start: Board):
     while True:
         # PriorityQueue
         current_board = open.pop(0)
-        open_boards.pop(0) # get rid of the board from this array
-        # print([board.h_val for board in open])
-        # print([board.f_val for board in open])
         counter += 1
         print(counter)
-        # print(current_board.effort)
-        # print(current_board.f_val)
-        # print("\n")
-        # open.clear() # removes all worse children from the stack (Is this necessary? Currently doesn't operate properly without it)
 
         if current_board.board_array == current_board.goal: # at goal state
             moves = []
             cost = current_board.effort
             final_depth = current_board.node_depth
+            # Collect moves from goal back up tree to start state
             while current_board.parent is not None:
                 moves.append(current_board.move)
                 current_board = current_board.parent
@@ -84,15 +86,18 @@ def search_tree(start: Board):
         # Assign all possible children to the current board
         populate_children(current_board)
         for child in current_board.children:
-            if child.board_array not in open_boards:
+            # Put all children on the priority queue as long as that child state has not already been placed on the queue
+            if child.board_array not in [board.board_array for board in open]:
                 open.append(child)
                 open_boards.append(child.board_array)
 
         # Added expanded board to closed for counting later
         closed.append(current_board)
+        # Prioritize the best children on the queue first
         open.sort(key = lambda child:child.f_val)
 
-tic = time.perf_counter()
+# Track the time it takes the algorithm to complete
+start_time = time.perf_counter()
 search_tree(parent)
-toc = time.perf_counter()
-print(f"\nSearch took {toc - tic:0.4f} seconds")
+end_time = time.perf_counter()
+print(f"\nSearch took {end_time - start_time:0.4f} seconds")
