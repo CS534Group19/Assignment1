@@ -1,3 +1,6 @@
+# Author: Cutter Beck
+# Updated: 2/5/2023
+
 import csv
 import copy
 

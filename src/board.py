@@ -1,3 +1,8 @@
+# DEPRECATED
+
+# Author: Cutter Beck
+# Updated: 2/3/2023
+
 import csv
 
 class NPuzzle():

@@ -1,3 +1,8 @@
+# Author: Cutter Beck
+# Updated: 2/10/2023
+
+# TODO Part 3 note: use greedy_hillclimbing.py to find a next move state and use that in a heuristic calculation somehow
+
 import sys
 import time
 from initialization import Initialization

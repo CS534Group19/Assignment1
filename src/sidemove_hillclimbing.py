@@ -1,3 +1,6 @@
+# Author: Cutter Beck
+# Updated: 2/10/2023
+
 import sys
 import time
 from initialization import Initialization
