@@ -33,7 +33,19 @@ def main():
     BOARD_6 = "./documentation/test_boards/board6.csv" # ~10.5 seconds, 3 moves, 14 nodes, 18 cost, branching factor 2.4
     BOARD_7 = "./documentation/test_boards/board7.csv" # ~3.8 seconds, 4 moves, 14 nodes, 46 cost, branching factor 1.9
 
-    arg_board_csv = BOARD_3
+    # Jeff (not Beck)'s Boards
+    B1 = "./documentation/test_boards/JeffBoards/B1.csv"
+    B2 = "./documentation/test_boards/JeffBoards/B2.csv"
+    B3 = "./documentation/test_boards/JeffBoards/B3.csv"
+    B4 = "./documentation/test_boards/JeffBoards/B4.csv"
+    B5 = "./documentation/test_boards/JeffBoards/B5.csv"
+    B6 = "./documentation/test_boards/JeffBoards/B6.csv"
+    B7 = "./documentation/test_boards/JeffBoards/B7.csv"
+    B8 = "./documentation/test_boards/JeffBoards/B8.csv"
+    B9 = "./documentation/test_boards/JeffBoards/B9.csv"
+    B10 = "./documentation/test_boards/JeffBoards/B10.csv"
+
+    arg_board_csv = B1
     arg_run_time = 30
 
     # Read file and create starting board
