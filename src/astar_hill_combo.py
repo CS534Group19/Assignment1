@@ -1,12 +1,9 @@
 # Author: Cutter Beck
 # Updated: 2/10/2023
 
-# TODO Part 3 note: use greedy_hillclimbing.py to find a next move state and use that in a heuristic calculation somehow
-
-import sys
 import time
-from initialization import Initialization
 from new_board import *
+from initialization import Initialization
 
 # A* param order -> board_file_name.csv heuristic tile_weight?
 # Params stored in sys.argv array, sys.argv[0] is the name of the Python file being executed
@@ -26,12 +23,11 @@ BOARD_5 = "./documentation/test_boards/board5.csv" # ~418.7 seconds, or ~7 min, 
 BOARD_6 = "./documentation/test_boards/board6.csv" # ~10.5 seconds, 3 moves, 14 nodes, 18 cost, branching factor 2.4
 BOARD_7 = "./documentation/test_boards/board7.csv" # ~3.8 seconds, 4 moves, 14 nodes, 46 cost, branching factor 1.9
 
-B8 = "./documentation/test_boards/JeffBoards/B8.csv"
+B1 = "./documentation/test_boards/JeffBoards/B1.csv"
 
 arg_board_csv = BOARD_3
-arg_heuristic = "sliding"
+arg_heuristic = "greedy"
 arg_weighted = "True"
-
 
 # Create a new N-Puzzle
 puzzle = Initialization(arg_board_csv)
@@ -85,7 +81,7 @@ def search_tree(start: Board):
                 print(f"Estimated branching factor {len(closed)**(1/final_depth):0.3f}")
             return
 
-        # Assign all possible children to the current board
+        # Assign greedy child to board children
         populate_children(current_board)
         for child in current_board.children:
             # Put all children on the priority queue as long as that child state has not already been placed on the queue

@@ -33,8 +33,9 @@ def main():
     BOARD_6 = "./documentation/test_boards/board6.csv" # ~10.5 seconds, 3 moves, 14 nodes, 18 cost, branching factor 2.4
     BOARD_7 = "./documentation/test_boards/board7.csv" # ~3.8 seconds, 4 moves, 14 nodes, 46 cost, branching factor 1.9
 
-    B11 = "./documentation/test_boards/JeffBoards/B2.csv" #Useless comment that doesn't do anything
-    arg_board_csv = B11
+    B8 = "./documentation/test_boards/JeffBoards/B8.csv"
+    B11 = "./documentation/test_boards/JeffBoards/B11.csv"
+    arg_board_csv = B8
     arg_run_time = 20
 
     # Read file and create starting board
@@ -119,7 +120,7 @@ def getFrontManhattanDistance(anyboard, frontboard):
             xdistance = abs(boardx - winx)
             ydistance = abs((i+1) - boardx - index + winx) / sideLength
 
-            totaldistance += anyboard[i] * (xdistance + ydistance)
+            totaldistance += (xdistance + ydistance)
             
     return totaldistance
 
@@ -141,7 +142,7 @@ def getBackManhattanDistance(anyboard, backboard):
             xdistance = abs(boardx - winx)
             ydistance = abs((i+1) - boardx - index + winx) / sideLength
 
-            totaldistance += anyboard[i] * (xdistance + ydistance)
+            totaldistance += (xdistance + ydistance)
     return totaldistance
 
 
