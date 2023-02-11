@@ -5,6 +5,8 @@ import copy
 import sys
 import time
 
+GREEDY_ITERS = 2
+
 class Board():
     """Holds a given state of the game, assumes a square board
     ### Parameters:
@@ -42,7 +44,10 @@ class Board():
         else:
             self.heuristic = heuristic
         # Attributes
-        self.goal = check_best_goal_state(self, self.front_goal, self.back_goal)
+        if self.heuristic == "sliding":
+            self.goal = check_best_goal_state(self, self.front_goal, self.back_goal)
+        else:
+            self.goal = self.back_goal
         self.children: list[Board] = []
         self.parent = None
         self.node_depth = 0
@@ -50,10 +55,19 @@ class Board():
         # List of possible moves
         self.zero_neighbors = []
         self.f_val: int = 0
-        self.h_val = getHVal(self, self.goal)
         self.effort = 0
-
-        # TODO Best Goal (front or back, check which is best for the board and set that to goal)
+        if heuristic == "sliding":
+            self.h_val = getHVal(self, self.goal)
+        else:
+            current = self
+            effort_sum = 0
+            children: Board = []
+            for i in range(GREEDY_ITERS):
+                children.append(produce_best_child(current))
+                current = children[-1]
+            for child in children:
+                effort_sum += child.effort
+            self.h_val = effort_sum
 
     def __str__(self):
         return str(self.board_array)
@@ -132,15 +146,20 @@ def populate_children(parent_board: Board, use_time: bool = False, program_start
         child.effort = parent_board.effort + val
         if parent_board.heuristic == "sliding":
             child.h_val = getHVal(child, child.goal)
-            current_time = time.perf_counter()
-            if current_time - program_start >= max_time and use_time:
-                return True
-        else:
-            pass # TODO create greedy heuristic function, defaulting to sliding
-            child.h_val = getHVal(child, child.goal)
-            current_time = time.perf_counter()
-            if current_time - program_start >= max_time and use_time:
-                return True
+        elif parent_board.heuristic == "greedy":
+            effort_sum = 0
+            children: Board = []
+            for i in range(GREEDY_ITERS):
+                print(child)
+                children.append(produce_best_child(child))
+                child = children[-1]
+            for child in children:
+                effort_sum += child.effort
+            child.h_val = effort_sum
+            children.clear()
+        current_time = time.perf_counter()
+        if current_time - program_start >= max_time and use_time:
+            return True
         child.f_val = child.h_val + child.effort
         # Tell the parent it has children
         parent_board.children.append(child)
@@ -208,12 +227,6 @@ def check_best_goal_state(board_obj: Board, front: list[list[int]], back: list[l
         # print(f"Front h val: {front_h_val}")
         back_h_val = getHVal(board_obj, back)
         # print(f"Back h val: {back_h_val}")
-    else:
-        # TODO implement greedy check, defaulting to sliding
-        front_h_val = getHVal(board_obj, front)
-        # print(f"Front h val: {front_h_val}")
-        back_h_val = getHVal(board_obj, back)
-        # print(f"Back h val: {back_h_val}")
 
     if back_h_val < front_h_val:
         return back
@@ -221,3 +234,55 @@ def check_best_goal_state(board_obj: Board, front: list[list[int]], back: list[l
         return front
     else:
         return back
+
+def produce_best_child(start: Board) -> Board:
+    start.set_zero_neighbors()
+    min_difference = sys.maxsize
+    min_diff_index = 0
+    for i in range(len(start.zero_neighbors)):
+        # Zero coordinates
+        x_0 = start.zero_neighbors[i][0]
+        y_0 = start.zero_neighbors[i][1]
+        # Neighbor coordinates
+        x_1 = start.zero_neighbors[i][2]
+        y_1 = start.zero_neighbors[i][3]
+
+        manhattan = abs(x_1 - x_0) + abs(y_1 - y_0)
+        if manhattan < min_difference:
+            min_difference = manhattan
+            min_diff_index = i
+    child = copy.deepcopy(start)
+    child.parent = start
+    child.node_depth = start.node_depth + 1
+
+    # Zero coordinates
+    col_0 = start.zero_neighbors[min_diff_index][0]
+    row_0 = start.zero_neighbors[min_diff_index][1]
+    # Neighbor coordinates
+    col_1 = start.zero_neighbors[min_diff_index][2]
+    row_1 = start.zero_neighbors[min_diff_index][3]
+
+    # Swap the zero and the value
+    val = start.board_array[row_1][col_1]
+    child.board_array[row_0][col_0] = val
+    child.board_array[row_1][col_1] = 0
+
+    # Compute string representation of the board move
+    if (row_1-row_0) == 1 and (col_1-col_0) == 0:
+        child.move = f"Moved {start.board_array[row_1][col_1]} up"
+    elif (row_1-row_0) == -1 and (col_1-col_0) == 0:
+        child.move = f"Moved {start.board_array[row_1][col_1]} down"    
+    elif (col_1-col_0) == 1 and (row_1-row_0) == 0:
+        child.move = f"Moved {start.board_array[row_1][col_1]} left"   
+    elif (col_1-col_0) == -1 and (row_1-row_0) == 0:
+        child.move = f"Moved {start.board_array[row_1][col_1]} right"
+
+    # Update neighbors for new board
+    child.set_zero_neighbors()
+    # Calculate the heuristic cost of the board
+    child.effort = (start.effort + val)
+    # child.h_val = child.effort
+
+    # child.f_val = child.h_val + child.effort
+    # start.children.append(child)
+    return child
