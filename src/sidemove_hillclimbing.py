@@ -23,8 +23,10 @@ BOARD_5 = "./documentation/test_boards/board5.csv" # ~418.7 seconds, or ~7 min, 
 BOARD_6 = "./documentation/test_boards/board6.csv" # ~10.5 seconds, 3 moves, 14 nodes, 18 cost, branching factor 2.4
 BOARD_7 = "./documentation/test_boards/board7.csv" # ~3.8 seconds, 4 moves, 14 nodes, 46 cost, branching factor 1.9
 
-arg_board_csv = BOARD_3
-arg_run_time = 90 # in seconds
+B11 = "./documentation/test_boards/JeffBoards/B11.csv"
+
+arg_board_csv = B11
+arg_run_time = 10 # in seconds
 
 # Create a new N-Puzzle
 puzzle = Initialization(arg_board_csv)

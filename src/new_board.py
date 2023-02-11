@@ -3,6 +3,7 @@
 
 import copy
 import sys
+import time
 
 class Board():
     """Holds a given state of the game, assumes a square board
@@ -86,12 +87,17 @@ class Board():
         self.zero_neighbors = zeroes
 
 
-def populate_children(parent_board: Board):
+def populate_children(parent_board: Board, use_time: bool = False, program_start: float=0.0, function_start: float=0.0, max_time: float=0.0):
     """Static method to populate a parent node with children
     Parameters
     - parent_board: Board object
     """
+    if function_start - program_start >= max_time and use_time:
+        return True
     for move in parent_board.zero_neighbors:
+        current_time = time.perf_counter()
+        if current_time - program_start >= max_time and use_time:
+            return True
         # Make new child
         # child = Board(parent_board.board_array, parent_board.goal)
         child = copy.deepcopy(parent_board)
@@ -126,9 +132,15 @@ def populate_children(parent_board: Board):
         child.effort = parent_board.effort + val
         if parent_board.heuristic == "sliding":
             child.h_val = getHVal(child, child.goal)
+            current_time = time.perf_counter()
+            if current_time - program_start >= max_time and use_time:
+                return True
         else:
             pass # TODO create greedy heuristic function, defaulting to sliding
             child.h_val = getHVal(child, child.goal)
+            current_time = time.perf_counter()
+            if current_time - program_start >= max_time and use_time:
+                return True
         child.f_val = child.h_val + child.effort
         # Tell the parent it has children
         parent_board.children.append(child)
@@ -164,7 +176,7 @@ def calculate_manhattan_dist_for_value(current_board: list[list[int]], goal_boar
     if current_coords == -1 or goal_coords == -1:
         return -1
     else:
-        if weighted:
+        if weighted == True:
             return abs(current_coords[0] - goal_coords[0]) + abs(current_coords[1] - goal_coords[1]) * (val**2)
         else:
             return abs(current_coords[0] - goal_coords[0]) + abs(current_coords[1] - goal_coords[1])

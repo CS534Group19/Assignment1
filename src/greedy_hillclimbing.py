@@ -35,9 +35,11 @@ B7 = "./documentation/test_boards/JeffBoards/B7.csv"
 B8 = "./documentation/test_boards/JeffBoards/B8.csv"
 B9 = "./documentation/test_boards/JeffBoards/B9.csv"
 B10 = "./documentation/test_boards/JeffBoards/B10.csv"
+B11 = "./documentation/test_boards/JeffBoards/B11.csv"
+B10 = "./documentation/test_boards/JeffBoards/B10.csv"
 
-arg_board_csv = BOARD_3
-arg_run_time = 30
+arg_board_csv = BOARD_7
+arg_run_time = .5
 
 # Create a new N-Puzzle
 puzzle = Initialization(arg_board_csv)
@@ -48,12 +50,10 @@ zeroes_in_back_goal = puzzle.back_goal
 # Make the starting board (makes use of default None for weighted and heuristic in the Board constructor)
 parent = Board(puzzle.board_array_2D, zeroes_in_front_goal, zeroes_in_back_goal)
 
-# TODO Search performs better weighted
 def hillClimb(start: Board, max_time: float, repeats: int):
     """Static method to run hill climbing
     ### Parameters
     - start: the starting Board for the search
-
     ### Returns
     - nothing, but prints to the console
     """
@@ -68,12 +68,12 @@ def hillClimb(start: Board, max_time: float, repeats: int):
 
     trial_counter = 0
     trial_time_total = 0.0
+    goal = False
 
-    # TODO make sure code breaks at time limit
     start_time = time.perf_counter()
-    while True:
-        current_time = time.perf_counter()
-        if (current_board.h_val == 0):
+    current_time = time.perf_counter()
+    while not goal:
+        if (current_board.board_array == current_board.goal):
             print("\nReached goal state")
             cost = current_board.effort
             final_depth = current_board.node_depth
@@ -90,42 +90,36 @@ def hillClimb(start: Board, max_time: float, repeats: int):
             print(f"Solution Cost: {cost}")
             if final_depth != 0:
                 print(f"Estimated branching factor {len(nodes_expanded)**(1/final_depth):0.3f}")
+            goal = True
             break
-        if (current_time - start_time < max_time): # haven't overdone the time limit
-            trial_start_time = time.perf_counter()
+        if (current_time - start_time < max_time):
+            trial_time_total = 0.0
             trial_counter += 1
 
+            trial_start_time = time.perf_counter()
+
             current_board = open.pop(0)
-            populate_children(current_board)
+
+            # DELAYED HERE
+            current_time = time.perf_counter()
+            if populate_children(current_board, True, start_time, current_time, max_time):
+                print("\nOut of time")
+                break
+
             current_board.children.sort(key = lambda child:child.h_val)
             open.append(current_board.children[0])
             nodes_expanded.append(current_board)
 
             trial_end_time = time.perf_counter()
             trial_time_total += trial_end_time - trial_start_time
-            if (trial_time_total > trial_time): # new trial if trial time overdone
+            
+            if trial_time_total <= trial_time: # new trial if trial time overdone
                 print("Restarting from best node")
-                trial_time_total = 0.0
-                open.append(current_board)
         else:
             # get the list of moves
             print("\nOut of time")
-            cost = current_board.effort
-            final_depth = current_board.node_depth
-            moves = []
-            while current_board.parent is not None:
-                moves.append(current_board.move)
-                current_board = current_board.parent
-            moves.reverse()
-            for move in moves:
-                print(move)
-
-            print(f"\nNodes expanded: {len(nodes_expanded)}")
-            print(f"Moves required: {len(moves)}")
-            print(f"Solution Cost: {cost}")
-            if final_depth != 0:
-                print(f"Estimated branching factor {len(nodes_expanded)**(1/final_depth):0.3f}")
             break
+        current_time = time.perf_counter()
 
 # Time the total length of running hill climbing
 start_time = time.perf_counter()
