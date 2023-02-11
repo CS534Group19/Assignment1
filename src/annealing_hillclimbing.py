@@ -1,4 +1,4 @@
-# Author: Oliver Schulman
+# Author: Oliver Shulman
 # Updated: 2/9/2023
 # Refactoring: Cutter Beck
 
@@ -33,8 +33,9 @@ def main():
     BOARD_6 = "./documentation/test_boards/board6.csv" # ~10.5 seconds, 3 moves, 14 nodes, 18 cost, branching factor 2.4
     BOARD_7 = "./documentation/test_boards/board7.csv" # ~3.8 seconds, 4 moves, 14 nodes, 46 cost, branching factor 1.9
 
-    arg_board_csv = BOARD_3
-    arg_run_time = 30
+    B11 = "./documentation/test_boards/JeffBoards/B2.csv" #Useless comment that doesn't do anything
+    arg_board_csv = B11
+    arg_run_time = 20
 
     # Read file and create starting board
     startingboard = []
@@ -74,11 +75,11 @@ def main():
     else:
         winState = frontboard
    
-    print("Initial Manhatten Distance")
+    print("Initial Manhattan Distance")
     print (CalculateDistance(startingboard, backboard, frontboard, winState))
     
     tic = time.perf_counter()
-    newBoard = solution_SimulatedAnnealing(startingboard, backboard, frontboard, winState)
+    newBoard = solution_SimulatedAnnealing(startingboard, backboard, frontboard, winState, arg_run_time)
     toc = time.perf_counter()
     print(newBoard)
     print(f"\nSearch took {toc - tic:0.4f} seconds")
@@ -150,102 +151,143 @@ def CalculateDistance(board, backboard, frontboard, winState):
     else:
         return getFrontManhattanDistance(board, frontboard)
 
+def randomize(blank):
+    boardloc = list(blank)
+    random.shuffle(boardloc)
+    return iter(boardloc)
+
 #Hill Climbing Alg with Simulated Annealing
-def hillClimbing(anyBoard, backboard, frontboard, winState, count):
+def hillClimbing(anyBoard, backboard, frontboard, winState, temp):
 
- #Set Temperature for Annealing
- temp = len(anyBoard)
- decay = 0.995
+    #Set Temperature for Annealing
 
- #Blank Spaces
- for i in range(len(anyBoard)):
+    #Blank Spaces
+    for i in randomize(range(len(anyBoard))):
         if anyBoard[i] == 1000 or anyBoard[i] == 0 or anyBoard[i] == 'B':
             break
 
- d = 0
- d = CalculateDistance(anyBoard, backboard, frontboard, winState)
- temp = temp * decay
- if (temp < 0.3):
-     temp = 0.3
+    d = 0
+    d = CalculateDistance(anyBoard, backboard, frontboard, winState)
+    if (temp < 0.3):
+        temp = 0.3
 
- sideLength = math.sqrt(len(anyBoard))
- sideLength = int(sideLength)
- while True:
-     randCase = random.randint(1,5)
-     if randCase == 1:
-            if i >= sideLength:
+    sideLength = math.sqrt(len(anyBoard))
+    sideLength = int(sideLength)
+    while True:
+        randCase = random.randint(1,5)
+        if randCase == 1:
+            if (i >= sideLength and isinstance((anyBoard[i-sideLength]), int)):
                 upMove = anyBoard
                 upMove[i] = anyBoard[i-sideLength]
+                val = upMove[i]
+                direction = 'Up'
                 upMove[i-sideLength] = 'B'
                 if (CalculateDistance(upMove, backboard, frontboard, winState) < d):
-                    return upMove
+                    return upMove, val, direction
                 else:
                     deltaE = CalculateDistance(upMove, backboard, frontboard, winState) - d
                     acceptProbability = min(math.exp(deltaE / temp), 1)
                     if random.random() <= acceptProbability:
-                        return upMove
-     elif randCase == 2:
-            if i < (sideLength * sideLength - sideLength):
+                        return upMove, val, direction
+        elif randCase == 2:
+            if (i < (sideLength * sideLength - sideLength) and isinstance((anyBoard[i+sideLength]), int)):
                 downMove = anyBoard
                 downMove[i] = anyBoard[i+sideLength]
+                val = downMove[i]
+                direction = 'Down'
                 downMove[i+sideLength] = 'B'
                 if CalculateDistance(downMove, backboard, frontboard, winState) < d:
-                    return downMove
+                    return downMove, val, direction
                 else:
                     deltaE = CalculateDistance(downMove, backboard, frontboard, winState) - d
                     acceptProbability = min(math.exp(deltaE / temp), 1)
                     if random.random() <= acceptProbability:
-                        return downMove
-     elif randCase == 3:
-            if i%sideLength != 0:
+                        return downMove, val, direction
+        elif randCase == 3:
+            if (i%sideLength != 0 and isinstance((anyBoard[i-1]), int)):
                 leftMove = anyBoard
                 leftMove[i] = anyBoard[i-1]
+                val = leftMove[i]
+                direction = 'Left'
                 leftMove[i-1] = 'B'
                 if (CalculateDistance(leftMove, backboard, frontboard, winState) < d):
-                    return leftMove
+                    return leftMove, val, direction
                 else:
                     deltaE = CalculateDistance(leftMove, backboard, frontboard, winState) - d
                     acceptProbability = min(math.exp(deltaE / temp), 1)
                     if random.random() <= acceptProbability:
-                        return leftMove
-     else:    
-            if (i+1)%sideLength != 0:
+                        return leftMove, val, direction
+        else:    
+            if ((i+1)%sideLength != 0 and isinstance((anyBoard[i+1]), int)):
                 rightMove = anyBoard
                 rightMove[i] = anyBoard[i+1]
+                val = rightMove[i]
+                direction = 'Right'
                 rightMove[i+1] = 'B'
                 if CalculateDistance(rightMove, backboard, frontboard, winState) < d:
-                    return rightMove
+                    return rightMove, val, direction
                 else:
                     deltaE = CalculateDistance(rightMove, backboard, frontboard, winState) - d
                     acceptProbability = min(math.exp(deltaE / temp), 1)
                     if random.random() <= acceptProbability:
-                        return rightMove
-                    
- return anyBoard
+                        return rightMove, val, direction
+    
 
 
-def solution_SimulatedAnnealing(board, backboard, frontboard, winState):
+def solution_SimulatedAnnealing(board, backboard, frontboard, winState, arg_run_time):
     # the success rate will increase by increasing the maxRound
     maxRound = 10000000
+    NumberOfRuns = 15
+    timePerRound = arg_run_time / NumberOfRuns
     count = 0
     originalboard = board
+    start = time.perf_counter()
+    newrunstart = time.perf_counter()
+    solutionCost = 0
+    temp = len(board)
+    decay = 0.9
+    newcount = 0
+    moves = ['Start Solution', 'First Move:']
 
     while True:
+        currenttime = time.perf_counter()
+        endtime = abs(start - currenttime)
+        runend = abs(newrunstart - currenttime)
+
         collisionNum = CalculateDistance(board, backboard, frontboard, winState)
+
         if collisionNum == 0:
+            length = len(moves) - 1
+            for i in range(0, length, 2):
+                print(moves[i] + ' ' + moves[i+1])
+            #print(moves)
             print("Move Count (Total Nodes Visited)")
             print (count)
             print("Moves in Solution (Node Depth)")
-            print(count%1000)
+            print(newcount)
             print("Branching Factor")
-            print((count)**(1/count%1000))
+            print((count)**(1/newcount))
+            print("Solution Cost")
+            print(solutionCost)
             print("Final Board")
             return board
-        if count%1000 == 0:
+        if (newcount > 1000 or runend > timePerRound):
             board = originalboard
-        board = hillClimbing(board, backboard, frontboard, winState, count)
+            newrunstart = time.perf_counter()
+            solutionCost = 0
+            newcount = 0
+            moves = ['Start Solution', 'First Move:']
+
+        board, val, direction = hillClimbing(board, backboard, frontboard, winState, temp)
+        solutionCost += val
+        movestring = str(val)
+        moves.append(movestring)
+        moves.append(direction)
         count += 1
-        if(count >= maxRound):
+        newcount += 1
+        temp = temp * decay
+
+        if(count >= maxRound or endtime > arg_run_time):
             print("Could not complete in time")
             return board
 
