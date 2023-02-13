@@ -1,6 +1,6 @@
 # Author: Jeff Davis, Mike Alicea
 # Adapted by Cutter Beck
-# Updated: 2/10/2023
+# Updated: 2/13/2023
 
 import sys
 import time
@@ -9,37 +9,8 @@ from new_board import *
 
 # Hill Climbing param order -> board_file_name.csv run_time
 # Params stored in sys.argv array, sys.argv[0] is the name of the Python file being executed
-# arg_board_csv = str(sys.argv[1])
-# arg_run_time = float(sys.argv[2])
-
-# Boards for testing
-# Professor Beck's boards
-BOARD_1 = "./documentation/test_boards/board1.csv" # not solvable according to https://www.geeksforgeeks.org/check-instance-8-puzzle-solvable/
-BOARD_2 = "./documentation/test_boards/board2.csv" # solvable according to https://www.geeksforgeeks.org/check-instance-15-puzzle-solvable/
-
-# Cutter Beck's boards
-BOARD_3 = "./documentation/test_boards/board3.csv" # ~0.2 seconds, 4 moves, 8 nodes, 18 cost, branching factor 1.7
-BOARD_4 = "./documentation/test_boards/board4.csv" # ~22 seconds, 6 moves, 52 nodes, 26 cost, branching factor 1.9
-BOARD_5 = "./documentation/test_boards/board5.csv" # ~418.7 seconds, or ~7 min, 5 moves, 25 nodes, 60 cost, branching factor 1.9
-BOARD_6 = "./documentation/test_boards/board6.csv" # ~10.5 seconds, 3 moves, 14 nodes, 18 cost, branching factor 2.4
-BOARD_7 = "./documentation/test_boards/board7.csv" # ~3.8 seconds, 4 moves, 14 nodes, 46 cost, branching factor 1.9
-
-# Jeff (not Beck)'s Boards
-B1 = "./documentation/test_boards/JeffBoards/B1.csv"
-B2 = "./documentation/test_boards/JeffBoards/B2.csv"
-B3 = "./documentation/test_boards/JeffBoards/B3.csv"
-B4 = "./documentation/test_boards/JeffBoards/B4.csv"
-B5 = "./documentation/test_boards/JeffBoards/B5.csv"
-B6 = "./documentation/test_boards/JeffBoards/B6.csv"
-B7 = "./documentation/test_boards/JeffBoards/B7.csv"
-B8 = "./documentation/test_boards/JeffBoards/B8.csv"
-B9 = "./documentation/test_boards/JeffBoards/B9.csv"
-B10 = "./documentation/test_boards/JeffBoards/B10.csv"
-B11 = "./documentation/test_boards/JeffBoards/B11.csv"
-B10 = "./documentation/test_boards/JeffBoards/B10.csv"
-
-arg_board_csv = BOARD_7
-arg_run_time = .5
+arg_board_csv = str(sys.argv[1])
+arg_run_time = float(sys.argv[2])
 
 # Create a new N-Puzzle
 puzzle = Initialization(arg_board_csv)
@@ -104,6 +75,14 @@ def hillClimb(start: Board, max_time: float, repeats: int):
             current_time = time.perf_counter()
             if populate_children(current_board, True, start_time, current_time, max_time):
                 print("\nOut of time")
+                print("Printing partial moves...")
+                moves = []
+                while current_board.parent is not None:
+                    moves.append(current_board.move)
+                    current_board = current_board.parent
+                moves.reverse()
+                for move in moves:
+                    print(move)
                 break
 
             current_board.children.sort(key = lambda child:child.h_val)
@@ -118,6 +97,14 @@ def hillClimb(start: Board, max_time: float, repeats: int):
         else:
             # get the list of moves
             print("\nOut of time")
+            print("Printing partial moves...")
+            moves = []
+            while current_board.parent is not None:
+                moves.append(current_board.move)
+                current_board = current_board.parent
+            moves.reverse()
+            for move in moves:
+                print(move)
             break
         current_time = time.perf_counter()
 
