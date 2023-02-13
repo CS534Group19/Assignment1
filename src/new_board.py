@@ -152,7 +152,7 @@ def populate_children(parent_board: Board, use_time: bool = False, program_start
             for i in range(GREEDY_ITERS):
                 # print(child)
                 children.append(produce_best_child(child))
-                child = children[-1]
+                child = children[0]
             for child in children:
                 effort_sum += child.effort
             child.h_val = effort_sum
@@ -247,9 +247,9 @@ def produce_best_child(start: Board) -> Board:
         x_1 = start.zero_neighbors[i][2]
         y_1 = start.zero_neighbors[i][3]
 
-        manhattan = abs(x_1 - x_0) + abs(y_1 - y_0)
-        if manhattan < min_difference:
-            min_difference = manhattan
+        euclid = (abs(x_1 - x_0)**2 + abs(y_1 - y_0)**2)**(.5)
+        if euclid < min_difference:
+            min_difference = euclid
             min_diff_index = i
     child = copy.deepcopy(start)
     child.parent = start
@@ -281,8 +281,8 @@ def produce_best_child(start: Board) -> Board:
     child.set_zero_neighbors()
     # Calculate the heuristic cost of the board
     child.effort = (start.effort + val)
-    # child.h_val = child.effort
+    child.h_val = (val**2*(min_difference))
 
-    # child.f_val = child.h_val + child.effort
+    child.f_val = child.h_val #- start.effort
     # start.children.append(child)
     return child
