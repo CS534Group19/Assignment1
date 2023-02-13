@@ -10,7 +10,7 @@
 | ## PROGRAM SPECIFICATIONS
 -------------------------------------------------------------------------------------------------------------------------------------
     - This program is coded in Python 3.11.1
-    - Using the UTF-8 Interpretter
+    - Using the UTF-8-sig Encoding (based on Professor Beck's example files)
     - This program can be run using the terminal command permutations, one each for project part
 -------------------------------------------------------------------------------------------------------------------------------------
 | ## PROGRAM EXECUTION
