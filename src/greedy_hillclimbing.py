@@ -73,7 +73,7 @@ def hillClimb(start: Board, max_time: float, repeats: int):
 
             # DELAYED HERE
             current_time = time.perf_counter()
-            if populate_children(current_board, True, start_time, current_time, max_time):
+        if populate_children(current_board, True, start_time, current_time, max_time):
                 print("\nOut of time")
                 print("Printing partial moves...")
                 moves = []
