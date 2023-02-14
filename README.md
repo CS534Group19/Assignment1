@@ -105,7 +105,7 @@
     1. Pops the best board from the queue and expands it
     2. Enqueues the board's children
     3. Seperately records metadata on the search (# of nodes expanded, node depth, total compute time)
-5. Repeats 1.4 until heurisitic value of a board equals 0 (every board tile is in its place)
+5. Repeats Step 4 until heurisitic value of a board equals 0 (every board tile is in its place)
 6. Backtracks from the goal back to start using the parent-child relation, archiving each movement's move from 0.4.4
 7. Reports the metadata from the A* Search via output
 
@@ -146,5 +146,5 @@
     2. Enqueues the board's children
     3. Seperately records metadata on the search (# of nodes expanded, node depth, total compute time)
 5. Repeats 1.4 until heurisitic value of a board equals 0 (every board tile is in its place)
-6. Backtracks from the goal back to start using the parent-child relation, archiving each movement's move from 0.4.4
+6. Backtracks from the goal back to start using the parent-child relation, archiving each movement's move from Part 0, 4. iv.
 7. Reports the metadata from the Modifed A* Search via output
