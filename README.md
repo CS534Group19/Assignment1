@@ -7,13 +7,13 @@
     - Edward Smith, essmith@wpi.edu
 
 -------------------------------------------------------------------------------------------------------------------------------------
-| ## PROGRAM SPECIFICATIONS
+## PROGRAM SPECIFICATIONS
 -------------------------------------------------------------------------------------------------------------------------------------
     - This program is coded in Python 3.10.9, but higher versions will work as well
     - Using the UTF-8-sig Encoding (based on Professor Beck's example files)
     - This program can be run using the terminal command permutations, one each for project part
 -------------------------------------------------------------------------------------------------------------------------------------
-| ## PROGRAM EXECUTION
+## PROGRAM EXECUTION
 ------------------------------------------------------------------------------------------------------------------------------------- 
     # RUNNING PART 1 - A* Search
         1. To run A* Search:
@@ -83,7 +83,7 @@
                 The average number of branches from a parent node to a child node during the search.
                 This is computed with the formula (total # of expanded nodes) ^ (1 / solution node depth)
 -------------------------------------------------------------------------------------------------------------------------------------
-| ## PROGRAM NOTES
+## PROGRAM NOTES
 -------------------------------------------------------------------------------------------------------------------------------------    
     # PART 0 - New Board Data Structure
         0.1 - Reads a .csv file into a square 2d array, interpretting 'B' as 0
