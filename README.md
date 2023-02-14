@@ -135,11 +135,11 @@
     2. If false, the greedy heuristic utilized will not take into account the tile weights 
 3. Begins a Modified A* Search by building a board using the New Board data structure
     1. The Board is modified slightly, with the heurisitic value being caluated using the new algorithm:
-    2. NEW HEURISTIC:\n
+    2. NEW HEURISTIC:
     *************************************************************************************************
     3. For each board, the total heuristic cost is computed as f(n) = g(n) + h(n) where:
         g(n) = weight of the moved tile
-        h(n) = the effort required to perform a successful greedy hill climb for 3 boards with sideways moves\n
+        h(n) = the effort required to perform a successful greedy hill climb for 3 boards with sideways moves
     *************************************************************************************************
 4. Devises a priority queue in which a board and its children are enqueued based on their total estimated effort
     1. Pops the best board from the queue and expands it
