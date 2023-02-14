@@ -19,64 +19,61 @@
 1. To run A* Search:
     1. Run from command line
         1. COMMAND: `python astar.py path_to_board.csv heuristic tile_weight?`
-            1. 
-                - path_to_board.csv: the path location of the board CSV file the algorithm will search
-                - heuristic: one of `sliding` or `greedy`
-                    - **`sliding` will run this version of A* for Part 1**
-                - tile_weight?: one of `True` or `False`
+            - path_to_board.csv: the path location of the board CSV file the algorithm will search
+            - heuristic: one of `sliding` or `greedy`
+                - **`sliding` will run this version of A* for Part 1**
+            - tile_weight?: one of `True` or `False`
         2. This will run the A* Search with either a weighted heuristic (true) or an unweighted heuristic (false)
 2. Output from A* Search:
     1. Moves
-        - The exact moves necessary to solve the board state
+        1. The exact moves necessary to solve the board state
     2. Nodes Expanded
-        - The total number of nodes expanded during the search for the goal
+        1. The total number of nodes expanded during the search for the goal
     3. Moves Required
-        - total number of moves required to reach the goal
+        1. total number of moves required to reach the goal
     4. Solution Cost
-        - The total cost of the moves adjusted for the tile weights
+        1. The total cost of the moves adjusted for the tile weights
     5. Estimated Branching Factor
-        - The average number of branches from a parent node to a child node during the search. This is computed with the formula (total # of expanded nodes) ^ (1 / solution node depth)
+        1. The average number of branches from a parent node to a child node during the search. This is computed with the formula (total # of expanded nodes) ^ (1 / solution node depth)
 -------------------------------------------------------------------------------------------------------------------------------------
 ### RUNNING PART 2 - Hill Climbing
 1. To run Hill Climbing:
     1. Run from command line
         1. COMMAND: `python greedy_hillclimbing.py path_to_board.csv time`
-            1. 
-                - path_to_board.csv: the path location of the board CSV file the algorithm will search
-                - time: a value in seconds, can be an integer or float as it is cast to float during execution
+            - path_to_board.csv: the path location of the board CSV file the algorithm will search
+            - time: a value in seconds, can be an integer or float as it is cast to float during execution
 2. Output from Hill Climbing:
     1. Moves
-        - The exact moves necessary to solve the board state
+        1. The exact moves necessary to solve the board state
     2. Nodes Expanded
-        - The total number of nodes expanded during the search for the goal
+        1. The total number of nodes expanded during the search for the goal
     3. Moves Required
-        - The total number of moves required to reach the goal
+        1. The total number of moves required to reach the goal
     4. Solution Cost
-        - The total cost of the moves adjusted for the tile weights
+        1. The total cost of the moves adjusted for the tile weights
     5. Estimated Branching Factor
-        - The average number of branches from a parent node to a child node during the search. This is computed with the formula (total # of expanded nodes) ^ (1 / solution node depth)
+        1. The average number of branches from a parent node to a child node during the search. This is computed with the formula (total # of expanded nodes) ^ (1 / solution node depth)
 -------------------------------------------------------------------------------------------------------------------------------------
 ### RUNNING PART 3 - Modified A* Search
 1. To run Modifed A* Search:
     1. Run from command line
         1. COMMAND: `python astar.py path_to_board.csv heuristic tile_weight?`
-            1. 
-                - path_to_board.csv: the path location of the board CSV file the algorithm will search
-                - heuristic: one of `sliding` or `greedy`
-                    - **`greedy` will run this modified version of A for Part 3**
-                - tile_weight?: one of `True` or `False`
+            - path_to_board.csv: the path location of the board CSV file the algorithm will search
+            - heuristic: one of `sliding` or `greedy`
+                - **`greedy` will run this modified version of A for Part 3**
+            - tile_weight?: one of `True` or `False`
         2. This will run the modified A* Search with either a weighted greedy heuristic (`True`) or an unweighted greedy heuristic (`False`)
 2. Output from Modified A* Search:
     1. Moves
-        - The exact moves necessary to solve the board state
+        1. The exact moves necessary to solve the board state
     2. Nodes Expanded
-        - The total number of nodes expanded during the search for the goal
+        1. The total number of nodes expanded during the search for the goal
     3. Moves Required
-        - The total number of moves required to reach the goal
+        1. The total number of moves required to reach the goal
     4. Solution Cost
-        - The total cost of the moves adjusted for the tile weights
+        1. The total cost of the moves adjusted for the tile weights
     5. Estimated Branching Factor
-        - The average number of branches from a parent node to a child node during the search. This is computed with the formula (total # of expanded nodes) ^ (1 / solution node depth)
+        1. The average number of branches from a parent node to a child node during the search. This is computed with the formula (total # of expanded nodes) ^ (1 / solution node depth)
 -------------------------------------------------------------------------------------------------------------------------------------
 ## PROGRAM NOTES
 -------------------------------------------------------------------------------------------------------------------------------------    
@@ -88,7 +85,7 @@
     2. The back state is represented by the zeros in the back
 4. To determine possible moves (children), each 0 is examined
     1. For each non-0 neighbor in a cardinal direction of a zero, 
-        1.  A new child board is created swapping the zero with its neighbor
+        1. A new child board is created swapping the zero with its neighbor
     2. This new child board is assigned its parent
     3. The effort of this child is computed as the weight of the swapped neighbor
     4. The plain English reprentation of this movement is stored within the child
@@ -147,7 +144,7 @@
 4. Devises a priority queue in which a board and its children are enqueued based on their total estimated effort
     1. Pops the best board from the queue and expands it
     2. Enqueues the board's children
-    . Seperately records metadata on the search (# of nodes expanded, node depth, total compute time)
+    3. Seperately records metadata on the search (# of nodes expanded, node depth, total compute time)
 5. Repeats 1.4 until heurisitic value of a board equals 0 (every board tile is in its place)
 6. Backtracks from the goal back to start using the parent-child relation, archiving each movement's move from 0.4.4
 7. Reports the metadata from the Modifed A* Search via output
