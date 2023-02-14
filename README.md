@@ -1,4 +1,4 @@
-## CS534 - ARTIFICIAL INTELLIGENCE
+## CS534 - ARTIFICIAL INTELLIGENCE, Assignment 1 - Search
     # Group 19
     - Michael Alicea, malicea2@wpi.edu
     - Cutter Beck, cjbeck@wpi.edu
