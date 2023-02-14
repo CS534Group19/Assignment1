@@ -152,7 +152,7 @@ def populate_children(parent_board: Board, use_time: bool = False, program_start
             for i in range(GREEDY_ITERS):
                 # print(child)
                 children.append(produce_best_child(child))
-                child = children[0]
+                child = children[-1]
             for child in children:
                 effort_sum += child.effort
             child.h_val = effort_sum

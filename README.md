@@ -9,7 +9,7 @@
 -------------------------------------------------------------------------------------------------------------------------------------
 | ## PROGRAM SPECIFICATIONS
 -------------------------------------------------------------------------------------------------------------------------------------
-    - This program is coded in Python 3.11.1
+    - This program is coded in Python 3.10.9, but higher versions will work as well
     - Using the UTF-8-sig Encoding (based on Professor Beck's example files)
     - This program can be run using the terminal command permutations, one each for project part
 -------------------------------------------------------------------------------------------------------------------------------------
@@ -22,6 +22,7 @@
                     1.1.1.1
                         - path_to_board.csv: the path location of the board CSV file the algorithm will search
                         - heuristic: one of `sliding` or `greedy`
+                            - **`sliding` will run this version of A* for Part 1**
                         - tile_weight?: one of `True` or `False`
                 1.1.2 - This will run the A* Search with either a weighted heuristic (true) or 
                                                                 an unweighted heuristic (false)
@@ -41,9 +42,10 @@
     # RUNNING PART 2 - Hill Climbing
         1. To run Hill Climbing:
             1.1 - Run from command line
-                1.1.1 - COMMAND: annealling_hillclimbing.py xxxx
-                1.1.2 - This will run the final version of hill climbing, allowing xxxx seconds for the search to occur.
-                    1.1.2.1 - NOTE: xxxx represents the time allowance in REAL SECONDS
+                1.1.1 - COMMAND: `python greedy_hillclimbing.py path_to_board.csv time`
+                    1.1.1.1
+                        - path_to_board.csv: the path location of the board CSV file the algorithm will search
+                        - time: a value in seconds, can be an integer or float as it is cast to float during execution
         2. Output from Hill Climbing:
             2.1 - Moves
                 The exact moves necessary to solve the board state
@@ -60,9 +62,14 @@
     # RUNNING PART 3 - Modified A* Search
         1. To run Modifed A* Search:
             1.1 - Run from command line
-                1.1.1 - COMMAND: astar.py greedy true/false
-                1.1.2 - This will run the modified A* Search with either a weighted greedy heuristic (true) or 
-                                                                         an unweighted greedy heuristic (false)
+                1.1.1 - COMMAND: `python astar.py path_to_board.csv heuristic tile_weight?`
+                    1.1.1.1
+                        - path_to_board.csv: the path location of the board CSV file the algorithm will search
+                        - heuristic: one of `sliding` or `greedy`
+                            - **`greedy` will run this modified version of A for Part 3**
+                        - tile_weight?: one of `True` or `False`
+                1.1.2 - This will run the modified A* Search with either a weighted greedy heuristic (`True`) or 
+                                                                         an unweighted greedy heuristic (`False`)
         2. Output from Modified A* Search:
             2.1 - Moves
                 The exact moves necessary to solve the board state
