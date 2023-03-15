@@ -21,7 +21,7 @@
         1. COMMAND: `python astar.py path_to_board.csv heuristic tile_weight?`
             - path_to_board.csv: the path location of the board CSV file the algorithm will search
             - heuristic: one of `sliding` or `greedy`
-                - **`sliding` will run this version of A* for Part 1**
+                - **`sliding` will run this version of AStar for Part 1**
             - tile_weight?: one of `True` or `False`
         2. This will run the A* Search with either a weighted heuristic (true) or an unweighted heuristic (false)
 2. Output from A* Search:
@@ -60,7 +60,7 @@
         1. COMMAND: `python astar.py path_to_board.csv heuristic tile_weight?`
             - path_to_board.csv: the path location of the board CSV file the algorithm will search
             - heuristic: one of `sliding` or `greedy`
-                - **`greedy` will run this modified version of A for Part 3**
+                - **`greedy` will run this modified version of AStar for Part 3**
             - tile_weight?: one of `True` or `False`
         2. This will run the modified A* Search with either a weighted greedy heuristic (`True`) or an unweighted greedy heuristic (`False`)
 2. Output from Modified A* Search:
@@ -105,7 +105,7 @@
     1. Pops the best board from the queue and expands it
     2. Enqueues the board's children
     3. Seperately records metadata on the search (# of nodes expanded, node depth, total compute time)
-5. Repeats 1.4 until heurisitic value of a board equals 0 (every board tile is in its place)
+5. Repeats Step 4 until heurisitic value of a board equals 0 (every board tile is in its place)
 6. Backtracks from the goal back to start using the parent-child relation, archiving each movement's move from 0.4.4
 7. Reports the metadata from the A* Search via output
 
@@ -135,16 +135,16 @@
     2. If false, the greedy heuristic utilized will not take into account the tile weights 
 3. Begins a Modified A* Search by building a board using the New Board data structure
     1. The Board is modified slightly, with the heurisitic value being caluated using the new algorithm:
-    2. NEW HEURISTIC:\n
+    2. NEW HEURISTIC:
     *************************************************************************************************
     3. For each board, the total heuristic cost is computed as f(n) = g(n) + h(n) where:
         g(n) = weight of the moved tile
-        h(n) = the effort required to perform a successful greedy hill climb for 3 boards with sideways moves\n
+        h(n) = the effort required to perform a successful greedy hill climb for 3 boards with sideways moves
     *************************************************************************************************
 4. Devises a priority queue in which a board and its children are enqueued based on their total estimated effort
     1. Pops the best board from the queue and expands it
     2. Enqueues the board's children
     3. Seperately records metadata on the search (# of nodes expanded, node depth, total compute time)
 5. Repeats 1.4 until heurisitic value of a board equals 0 (every board tile is in its place)
-6. Backtracks from the goal back to start using the parent-child relation, archiving each movement's move from 0.4.4
+6. Backtracks from the goal back to start using the parent-child relation, archiving each movement's move from Part 0, 4. iv.
 7. Reports the metadata from the Modifed A* Search via output
